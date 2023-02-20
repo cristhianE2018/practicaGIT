@@ -20,8 +20,12 @@ public class ControladorVehiculos {
     private static final Logger LOGGER = LoggerFactory.getLogger(ControladorVehiculos.class);
     RepositorioVehiculos repoVehiculos;
 
-    public ControladorVehiculos(RepositorioVehiculos repoVehiculos) {
+    ServicioVehiculos servVehiculos;
+
+    public ControladorVehiculos(RepositorioVehiculos repoVehiculos,
+                                ServicioVehiculos servVehiculos) {
         this.repoVehiculos = repoVehiculos;
+        this.servVehiculos = servVehiculos;
     }
 
     @GetMapping("vehiculos")
@@ -38,4 +42,19 @@ public class ControladorVehiculos {
         LOGGER.debug("GET porKilometraje: {}, {}", k1, k2);
         return this.repoVehiculos.buscarPorKilometraje(k1,k2);
     }
+
+    @GetMapping("vehiculos/{placas}")
+    public ResponseEntity<Vehiculo> getPorPlacas(
+            @PathVariable("placas") String p
+    ) {
+        LOGGER.debug("GET vehiculos placas:{}", p);
+        Optional<Vehiculo> opv = this.repoVehiculos.findById(p);
+        if (opv.isPresent()) {
+            return ResponseEntity.ok(opv.get());
+        }
+        else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }
